@@ -4,6 +4,14 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Cognitive Influence Rating - Games of Arcadia</title>
+<meta name="description" content="Paste any text and get an instant manipulation score. Cognitive Influence Rating analyses articles, speeches, YouTube transcripts and social posts against 20 indicators of psychological influence and narrative engineering. Free, AI-powered. Requires only a Google API key.">
+<meta property="og:title" content="Cognitive Influence Rating">
+<meta property="og:description" content="Paste any text and get an instant manipulation score. Free, AI-powered manipulation and narrative engineering analyser.">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Cognitive Influence Rating">
+<meta name="twitter:description" content="Paste any text and get an instant manipulation score. Free, AI-powered manipulation and narrative engineering analyser.">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='black'/><text x='50' y='72' font-family='Arial Black,sans-serif' font-weight='900' font-size='38' fill='white' text-anchor='middle' letter-spacing='1'>GoA</text></svg>">
 <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Barlow+Condensed:wght@300;400;600;700;900&family=Barlow:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
 :root {
@@ -486,7 +494,7 @@ textarea::placeholder { color: var(--text-dim); opacity: 0.5; }
 
 .info-title {
   font-family: var(--mono);
-  font-size: 10px;
+  font-size: 14px;
   letter-spacing: 2px;
   color: var(--accent);
   text-transform: uppercase;
@@ -581,7 +589,7 @@ textarea::placeholder { color: var(--text-dim); opacity: 0.5; }
 
 .q-name {
   font-family: var(--cond);
-  font-size: 18px;
+  font-size: 21px;
   font-weight: 700;
   color: var(--text-bright);
   line-height: 1.3;
@@ -704,14 +712,14 @@ footer {
 
 <!-- SETUP MODAL -->
 <div class="modal hidden" id="setupModal">
-  <div class="modal-box">
-    <div style="font-family:var(--cond);font-weight:900;font-size:26px;color:var(--text-bright);letter-spacing:2px;text-transform:uppercase;margin-bottom:6px">Cognitive <span style="color:var(--accent2)">Influence Rating</span></div>
+  <div class="modal-box" style="padding-bottom:90px">
+    <div style="font-family:var(--cond);font-weight:900;font-size:30px;color:var(--text-bright);letter-spacing:2px;text-transform:uppercase;margin-bottom:6px">Cognitive <span style="color:var(--accent2)">Influence Rating</span></div>
     <div class="modal-tag" style="margin-bottom:20px">// One-time setup</div>
-    <div class="modal-heading">You need a free<br>Gemini API key to begin.</div>
+    <div class="modal-heading">You need a Google<br>Gemini API key to begin.</div>
 
     <div class="step">
       <div class="step-num">01</div>
-      <div class="step-body">Go to <a href="https://aistudio.google.com/apikey" target="_blank">aistudio.google.com/apikey</a> and sign in with a Google account. No credit card required.</div>
+      <div class="step-body">Go to <a href="https://aistudio.google.com/apikey" target="_blank">aistudio.google.com/apikey</a> and sign in with a Google account. <strong>No credit card required for the free tier.</strong></div>
     </div>
 
     <div class="step">
@@ -732,7 +740,7 @@ footer {
     </div>
 
     <button class="main-btn" id="setupBtn"><span>Validate &amp; Continue</span></button>
-    <div style="font-family:var(--mono);font-size:11px;color:var(--text-dim);text-align:center;margin-top:16px;letter-spacing:1px">&copy; <span class="yr"></span> Games of Arcadia. All rights reserved.</div>
+    <div style="font-family:var(--mono);font-size:11px;color:var(--text-dim);text-align:center;position:absolute;bottom:16px;left:0;right:0;letter-spacing:1px">&copy; <span class="yr"></span> Games of Arcadia. All rights reserved.</div>
   </div>
 </div>
 
@@ -854,7 +862,7 @@ footer {
 <!-- FOOTER -->
 <footer>
   <div class="footer-left">
-    <a href="https://gamesofarcadia.itch.io" target="_blank" style="text-decoration:none"><div class="goa-logo-sm">GoA</div></a>
+    <a href="https://www.instagram.com/gamesofarcadia/" target="_blank" style="text-decoration:none"><div class="goa-logo-sm">GoA</div></a>
     <div class="footer-text">GAMES OF ARCADIA &nbsp;|&nbsp; COGNITIVE INFLUENCE RATING v1.0</div>
   </div>
   <div class="footer-right">&copy; <span class="yr"></span> GAMES OF ARCADIA - ALL RIGHTS RESERVED</div>
