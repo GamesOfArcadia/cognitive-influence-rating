@@ -1,0 +1,1219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cognitive Influence Rating - Games of Arcadia</title>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Barlow+Condensed:wght@300;400;600;700;900&family=Barlow:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #080c0f;
+  --surface: #0d1419;
+  --surface2: #111820;
+  --border: #1e2d38;
+  --accent: #2a9d8f;
+  --accent2: #e76f51;
+  --danger: #e63946;
+  --warn: #e9c46a;
+  --text: #c8d8e0;
+  --text-dim: #4a6070;
+  --text-bright: #eaf4f8;
+  --score-low: #2a9d8f;
+  --score-mid: #e9c46a;
+  --score-high: #e63946;
+  --mono: 'Share Tech Mono', monospace;
+  --sans: 'Barlow', sans-serif;
+  --cond: 'Barlow Condensed', sans-serif;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html, body {
+  height: 100%;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--sans);
+  font-size: 16px;
+  overflow: hidden;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.025) 2px, rgba(0,0,0,0.025) 4px);
+  pointer-events: none;
+  z-index: 9999;
+}
+
+/* MODALS */
+.modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(8,12,15,0.97);
+  z-index: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+
+.modal.hidden { display: none; }
+
+.modal-box {
+  border: 1px solid var(--border);
+  background: var(--surface);
+  max-width: 540px;
+  width: 100%;
+  padding: 40px;
+  position: relative;
+}
+
+.modal-close {
+  position: absolute;
+  top: 14px; right: 16px;
+  background: transparent;
+  border: none;
+  color: var(--text-dim);
+  font-size: 20px;
+  cursor: pointer;
+  font-family: var(--mono);
+  line-height: 1;
+  transition: color 0.2s;
+}
+.modal-close:hover { color: var(--text-bright); }
+
+.modal-tag {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 3px;
+  color: var(--accent);
+  text-transform: uppercase;
+  margin-bottom: 18px;
+}
+
+.modal-heading {
+  font-family: var(--cond);
+  font-size: 28px;
+  font-weight: 900;
+  color: var(--text-bright);
+  letter-spacing: 1px;
+  margin-bottom: 28px;
+  line-height: 1.2;
+}
+
+.step {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 22px;
+}
+
+.step-num {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--accent);
+  border: 1px solid var(--accent);
+  width: 26px; height: 26px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.step-body {
+  font-size: 14px;
+  color: var(--text);
+  line-height: 1.7;
+  font-weight: 300;
+}
+
+.step-body a { color: var(--accent); text-decoration: none; font-family: var(--mono); font-size: 13px; }
+.step-body a:hover { text-decoration: underline; }
+.step-body strong { color: var(--text-bright); }
+
+.field-wrap { position: relative; margin-top: 10px; }
+
+.field-wrap input {
+  width: 100%;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  color: var(--text-bright);
+  font-family: var(--mono);
+  font-size: 14px;
+  padding: 14px 40px 14px 16px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+.field-wrap input:focus { border-color: var(--accent); }
+
+.field-check {
+  position: absolute;
+  right: 14px; top: 50%;
+  transform: translateY(-50%);
+  color: var(--accent);
+  font-size: 18px;
+  display: none;
+  pointer-events: none;
+}
+
+.field-err {
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--danger);
+  margin-top: 8px;
+  display: none;
+  letter-spacing: 1px;
+}
+.field-err.show { display: block; }
+
+.main-btn {
+  width: 100%;
+  padding: 16px;
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--text-dim);
+  font-family: var(--cond);
+  font-size: 17px;
+  font-weight: 700;
+  letter-spacing: 5px;
+  text-transform: uppercase;
+  cursor: not-allowed;
+  margin-top: 16px;
+  transition: all 0.25s;
+  position: relative;
+  overflow: hidden;
+}
+.main-btn::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--accent);
+  transform: translateX(-101%);
+  transition: transform 0.25s;
+  z-index: 0;
+}
+.main-btn span { position: relative; z-index: 1; }
+.main-btn.on { border-color: var(--accent); color: var(--accent); cursor: pointer; }
+.main-btn.on:hover::before { transform: translateX(0); }
+.main-btn.on:hover { color: var(--bg); }
+
+/* GOA LOGO */
+.goa-logo {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 52px; height: 52px;
+  background: #000;
+  border: 1px solid #333;
+  font-family: var(--cond);
+  font-weight: 900;
+  font-size: 18px;
+  color: #fff;
+  letter-spacing: 1px;
+  margin-bottom: 16px;
+}
+
+.goa-logo-sm {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px; height: 30px;
+  background: #000;
+  border: 1px solid #222;
+  font-family: var(--cond);
+  font-weight: 900;
+  font-size: 12px;
+  color: #fff;
+  flex-shrink: 0;
+}
+
+.about-text {
+  font-size: 14px;
+  font-weight: 300;
+  line-height: 1.8;
+  color: var(--text);
+  margin-bottom: 14px;
+}
+
+.about-credit {
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--text-dim);
+  border-top: 1px solid var(--border);
+  padding-top: 16px;
+  line-height: 2;
+}
+.about-credit a { color: var(--accent); text-decoration: none; }
+
+/* HEADER */
+header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 28px;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface);
+  flex-shrink: 0;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.logo {
+  font-family: var(--cond);
+  font-weight: 900;
+  font-size: clamp(22px, 2.8vw, 34px);
+  letter-spacing: 3px;
+  color: var(--text-bright);
+  text-transform: uppercase;
+  line-height: 1;
+}
+.logo span { color: var(--accent2); }
+.logo-sub {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--accent);
+  letter-spacing: 2px;
+  display: block;
+  margin-top: 4px;
+}
+
+.hdr-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.status-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: var(--text-dim);
+  flex-shrink: 0;
+}
+.status-dot.live {
+  background: var(--accent);
+  box-shadow: 0 0 8px var(--accent);
+  animation: blink 2s infinite;
+}
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
+
+.hdr-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--text-dim);
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 1px;
+  padding: 8px 14px;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+.hdr-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+/* MAIN LAYOUT */
+.main {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  flex: 1;
+  overflow: hidden;
+  min-height: 0;
+}
+
+/* PANELS */
+.left-panel {
+  padding: 28px;
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  overflow-y: auto;
+}
+
+.right-panel {
+  padding: 28px;
+  background: var(--surface);
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  overflow-y: auto;
+}
+
+.panel-label {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 3px;
+  color: var(--accent);
+  text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+.panel-label::after { content:''; flex:1; height:1px; background:var(--border); }
+
+.input-lbl {
+  font-family: var(--cond);
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  margin-bottom: 5px;
+}
+
+.input-sub {
+  font-size: 13px;
+  color: var(--text-dim);
+  font-family: var(--mono);
+  opacity: 0.7;
+  margin-bottom: 8px;
+  line-height: 1.6;
+}
+
+textarea {
+  width: 100%;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  color: var(--text-bright);
+  font-family: var(--mono);
+  font-size: 14px;
+  padding: 14px 16px;
+  outline: none;
+  transition: border-color 0.2s;
+  resize: vertical;
+  min-height: 200px;
+  line-height: 1.6;
+}
+textarea:focus { border-color: var(--accent); }
+textarea::placeholder { color: var(--text-dim); opacity: 0.5; }
+
+.char-row {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 6px;
+}
+
+.char-count {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--text-dim);
+}
+.char-count.warn { color: var(--warn); }
+.char-count.over { color: var(--danger); }
+
+.process-btn {
+  width: 100%;
+  padding: 18px;
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--text-dim);
+  font-family: var(--cond);
+  font-size: 19px;
+  font-weight: 700;
+  letter-spacing: 6px;
+  text-transform: uppercase;
+  cursor: not-allowed;
+  transition: all 0.25s;
+  position: relative;
+  overflow: hidden;
+}
+.process-btn::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--accent);
+  transform: translateX(-101%);
+  transition: transform 0.25s;
+  z-index: 0;
+}
+.process-btn span { position: relative; z-index: 1; }
+.process-btn.on { border-color: var(--accent); color: var(--accent); cursor: pointer; }
+.process-btn.on:hover::before { transform: translateX(0); }
+.process-btn.on:hover { color: var(--bg); }
+
+.loader {
+  display: none;
+  align-items: center;
+  gap: 12px;
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--accent);
+  letter-spacing: 2px;
+}
+.loader.show { display: flex; }
+
+.dots { display: flex; gap: 4px; }
+.dots span {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--accent);
+  animation: dp 1.2s infinite;
+}
+.dots span:nth-child(2) { animation-delay: 0.2s; }
+.dots span:nth-child(3) { animation-delay: 0.4s; }
+@keyframes dp { 0%,80%,100%{opacity:0.2;transform:scale(0.8)} 40%{opacity:1;transform:scale(1)} }
+
+.error-bar {
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--danger);
+  border: 1px solid var(--danger);
+  background: rgba(230,57,70,0.05);
+  padding: 10px 14px;
+  display: none;
+  line-height: 1.6;
+}
+.error-bar.show { display: block; }
+
+/* INFO BLOCK */
+.info-block {
+  border: 1px solid var(--border);
+  background: var(--surface2);
+  padding: 16px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.info-title {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 2px;
+  color: var(--accent);
+  text-transform: uppercase;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--border);
+}
+
+.info-row {
+  font-size: 14px;
+  color: var(--text-dim);
+  font-weight: 300;
+  line-height: 1.6;
+}
+.info-row strong { color: var(--text); font-weight: 500; }
+
+/* USAGE BLOCK */
+.usage-block {
+  border: 1px solid var(--border);
+  background: var(--surface2);
+  padding: 12px 16px;
+  display: none;
+  justify-content: space-between;
+  align-items: center;
+}
+.usage-block.show { display: flex; }
+.usage-lbl { font-family: var(--mono); font-size: 11px; letter-spacing: 2px; color: var(--text-dim); }
+.usage-val { font-family: var(--mono); font-size: 13px; color: var(--accent); }
+
+/* PLACEHOLDER */
+.placeholder {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  opacity: 0.2;
+}
+.placeholder-icon { font-size: 44px; filter: grayscale(1); }
+.placeholder-text {
+  font-family: var(--mono);
+  font-size: 12px;
+  letter-spacing: 2px;
+  color: var(--text-dim);
+  text-align: center;
+  line-height: 2;
+}
+
+/* RESULTS */
+.results-wrap { display: none; flex-direction: column; gap: 16px; }
+.results-wrap.show { display: flex; }
+
+.action-bar { display: flex; gap: 8px; flex-wrap: wrap; }
+
+.action-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--text-dim);
+  font-family: var(--mono);
+  font-size: 12px;
+  letter-spacing: 1px;
+  padding: 9px 15px;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-transform: uppercase;
+  text-decoration: none;
+}
+.action-btn:hover { border-color: var(--accent); color: var(--accent); }
+.action-btn.done { border-color: var(--accent); color: var(--accent); }
+
+.q-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+}
+
+.q-row {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  padding: 12px 14px;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 6px;
+  align-items: start;
+  opacity: 0;
+  animation: fu 0.3s ease forwards;
+}
+@keyframes fu { from{opacity:0;transform:translateY(6px)} to{opacity:1;transform:translateY(0)} }
+
+.q-name {
+  font-family: var(--cond);
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text-bright);
+  line-height: 1.3;
+}
+
+.q-reason {
+  font-size: 13px;
+  color: var(--text-dim);
+  font-weight: 300;
+  line-height: 1.5;
+  margin-top: 4px;
+  grid-column: 1 / -1;
+}
+
+.q-score {
+  font-family: var(--mono);
+  font-size: 20px;
+  font-weight: bold;
+  min-width: 30px;
+  text-align: right;
+}
+.s0,.s1 { color: var(--score-low); }
+.s2,.s3 { color: var(--score-mid); }
+.s4,.s5 { color: var(--score-high); }
+
+/* TOTAL */
+.total-block {
+  border: 1px solid var(--border);
+  background: var(--surface2);
+  padding: 20px 24px;
+}
+
+.total-top {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 12px;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.total-lbl {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 3px;
+  color: var(--text-dim);
+  text-transform: uppercase;
+}
+
+.total-verdict {
+  font-family: var(--cond);
+  font-size: 19px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  margin-top: 4px;
+}
+
+.total-num {
+  font-family: var(--mono);
+  font-size: 42px;
+  line-height: 1;
+}
+
+.vl { color: var(--score-low); }
+.vm { color: var(--score-mid); }
+.vh { color: var(--score-high); }
+
+.score-track { height: 3px; background: var(--border); margin-bottom: 14px; }
+.score-fill {
+  height: 3px;
+  background: linear-gradient(90deg, var(--score-low) 0%, var(--score-mid) 50%, var(--score-high) 100%);
+  width: 0%;
+  transition: width 1s ease;
+}
+
+.conclusion {
+  font-size: 15px;
+  font-weight: 300;
+  color: var(--text);
+  line-height: 1.8;
+  border-top: 1px solid var(--border);
+  padding-top: 12px;
+}
+
+/* FOOTER */
+footer {
+  border-top: 1px solid var(--border);
+  padding: 12px 28px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--surface);
+  flex-shrink: 0;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.footer-left { display: flex; align-items: center; gap: 10px; }
+.footer-text { font-family: var(--mono); font-size: 11px; color: var(--text-dim); letter-spacing: 1px; }
+.footer-right { font-family: var(--mono); font-size: 11px; color: var(--text-dim); letter-spacing: 1px; }
+
+/* RESPONSIVE */
+@media (max-width: 860px) {
+  .main { grid-template-columns: 1fr; overflow: auto; }
+  .left-panel { border-right: none; border-bottom: 1px solid var(--border); overflow: visible; }
+  .right-panel { overflow: visible; }
+  .q-grid { grid-template-columns: 1fr; }
+  header { padding: 12px 16px; }
+  .left-panel, .right-panel { padding: 18px; }
+}
+
+@media (max-width: 480px) {
+  .logo { font-size: 18px; }
+  .modal-box { padding: 24px; }
+  .modal-heading { font-size: 22px; }
+  .total-num { font-size: 40px; }
+}
+</style>
+</head>
+<body>
+
+<!-- SETUP MODAL -->
+<div class="modal hidden" id="setupModal">
+  <div class="modal-box">
+    <div style="font-family:var(--cond);font-weight:900;font-size:26px;color:var(--text-bright);letter-spacing:2px;text-transform:uppercase;margin-bottom:6px">Cognitive <span style="color:var(--accent2)">Influence Rating</span></div>
+    <div class="modal-tag" style="margin-bottom:20px">// One-time setup</div>
+    <div class="modal-heading">You need a free<br>Gemini API key to begin.</div>
+
+    <div class="step">
+      <div class="step-num">01</div>
+      <div class="step-body">Go to <a href="https://aistudio.google.com/apikey" target="_blank">aistudio.google.com/apikey</a> and sign in with a Google account. No credit card required.</div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">02</div>
+      <div class="step-body">Click <strong>"Create API Key"</strong>. Copy the key that appears.</div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">03</div>
+      <div class="step-body">
+        Paste your key below. It is stored only on your device and sent exclusively to Google's servers when you run an analysis.
+        <div class="field-wrap">
+          <input type="text" id="setupKeyInput" placeholder="AIza..." autocomplete="off">
+          <span class="field-check" id="setupKeyCheck">&#10003;</span>
+        </div>
+        <div class="field-err" id="setupKeyErr">Invalid or inactive key. Please check and try again.</div>
+      </div>
+    </div>
+
+    <button class="main-btn" id="setupBtn"><span>Validate &amp; Continue</span></button>
+    <div style="font-family:var(--mono);font-size:11px;color:var(--text-dim);text-align:center;margin-top:16px;letter-spacing:1px">&copy; <span class="yr"></span> Games of Arcadia. All rights reserved.</div>
+  </div>
+</div>
+
+<!-- ABOUT MODAL -->
+<div class="modal hidden" id="aboutModal">
+  <div class="modal-box">
+    <button class="modal-close" id="aboutClose">&#10005;</button>
+    <div style="display:inline-flex;align-items:center;justify-content:center;width:72px;height:72px;background:#000;border:1px solid #333;font-family:var(--cond);font-weight:900;font-size:26px;color:#fff;letter-spacing:1px;margin-bottom:20px">GoA</div>
+    <div class="modal-heading" style="font-size:28px;margin-bottom:20px">Cognitive Influence Rating v1.0</div>
+    <div class="about-text" style="font-size:16px;line-height:1.9">Cognitive Influence Rating analyses any text - article, transcript, speech, or social media post - and scores it against 20 indicators of psychological manipulation, disinformation architecture, and narrative engineering.</div>
+    <div class="about-text" style="font-size:16px;line-height:1.9">The tool does not determine truth or falsehood. A high score means the content uses techniques commonly found in influence operations. What you do with that information is up to you.</div>
+    <div class="about-text" style="font-size:16px;line-height:1.9">Your API key is stored locally on your device. No data you submit is stored or logged by Games of Arcadia.</div>
+    <div class="about-credit" style="font-size:14px;line-height:2.2">
+      A <strong style="color:var(--text-bright)">Games of Arcadia</strong> tool &nbsp;|&nbsp; &copy; <span class="yr"></span> Games of Arcadia. All rights reserved.<br>
+      The Cognitive Influence Rating framework is an original Games of Arcadia tool powered by Gemini and inspired by open media literacy research including the Narrative Credibility Index.<br>
+      Contact: <a href="mailto:goa.contactpro@gmail.com">goa.contactpro@gmail.com</a>
+    </div>
+  </div>
+</div>
+
+<!-- CHANGE KEY MODAL -->
+<div class="modal hidden" id="keyModal">
+  <div class="modal-box">
+    <button class="modal-close" id="keyModalClose">&#10005;</button>
+    <div class="modal-tag">// API Key</div>
+    <div class="modal-heading" style="font-size:22px;margin-bottom:20px">Update your Gemini API Key</div>
+    <div class="field-wrap">
+      <input type="text" id="changeKeyInput" placeholder="AIza..." autocomplete="off">
+      <span class="field-check" id="changeKeyCheck">&#10003;</span>
+    </div>
+    <div class="field-err" id="changeKeyErr">Invalid or inactive key. Please check and try again.</div>
+    <button class="main-btn" id="changeKeyBtn"><span>Validate &amp; Save</span></button>
+    <button class="main-btn" id="deleteKeyBtn" style="margin-top:8px;border-color:var(--danger);color:var(--danger);cursor:pointer;" class="on"><span>&#10005; Delete Saved Key</span></button>
+  </div>
+</div>
+
+<!-- HEADER -->
+<header>
+  <div class="logo">
+    Cognitive <span>Influence Rating</span>
+  </div>
+  <div class="hdr-right">
+    <div class="status-dot" id="statusDot"></div>
+    <button class="hdr-btn" id="keyBtn">&#128273; API KEY</button>
+    <button class="hdr-btn" id="aboutBtn">&#9432; ABOUT</button>
+  </div>
+</header>
+
+<!-- MAIN -->
+<div class="main">
+
+  <div class="left-panel">
+    <div class="panel-label">// Input</div>
+
+    <div>
+      <div class="input-lbl">Text Input</div>
+      <div class="input-sub">Paste any text: article, speech, transcript, social post, or news item. Max 100,000 characters.</div>
+      <textarea id="inputText" placeholder="Paste content here..."></textarea>
+      <div class="char-row">
+        <span class="char-count" id="charCount">0 / 100,000</span>
+      </div>
+    </div>
+
+    <div class="error-bar" id="errorBar"></div>
+
+    <button class="process-btn" id="processBtn" disabled><span>&#9654;&nbsp; PROCESS</span></button>
+
+    <div class="loader" id="loader">
+      <div class="dots"><span></span><span></span><span></span></div>
+      ANALYZING...
+    </div>
+
+    <div class="usage-block" id="usageBlock">
+      <span class="usage-lbl">LAST REQUEST</span>
+      <span class="usage-val" id="usageVal">-</span>
+    </div>
+
+    <div class="info-block">
+      <div class="info-title">// Google Gemini API - Key Policy</div>
+      <div class="info-row">&#9889; <strong>Free tier:</strong> ~1,000 analyses per day. Resets automatically every 24 hours.</div>
+      <div class="info-row">&#128176; <strong>Cost:</strong> a free key covers standard daily usage. If you need more, you can enable billing in Google AI Studio - a typical analysis costs under one cent.</div>
+      <div class="info-row">&#128274; <strong>Privacy:</strong> your text goes only to Google's servers. Nothing is stored by Games of Arcadia.</div>
+    </div>
+  </div>
+
+  <div class="right-panel">
+    <div class="panel-label">// Analysis Output</div>
+
+    <div class="placeholder" id="placeholder">
+      <div class="placeholder-icon">&#128225;</div>
+      <div class="placeholder-text">AWAITING INPUT<br>PASTE TEXT AND PRESS PROCESS</div>
+    </div>
+
+    <div class="results-wrap" id="resultsWrap">
+      <div class="action-bar">
+        <button class="action-btn" id="copyBtn">&#8984; COPY RESULTS</button>
+        <button class="action-btn" id="exportBtn">&#8659; EXPORT TXT</button>
+        <a class="action-btn" id="shareX" href="#" target="_blank">&#120143; SHARE</a>
+        <a class="action-btn" id="shareFB" href="#" target="_blank">f SHARE</a>
+      </div>
+
+      <div class="total-block">
+        <div class="total-top">
+          <div>
+            <div class="total-lbl">CIR Total Score</div>
+            <div class="total-verdict" id="totalVerdict"></div>
+          </div>
+          <div class="total-num" id="totalNum">-</div>
+        </div>
+        <div class="score-track"><div class="score-fill" id="scoreFill"></div></div>
+        <div class="conclusion" id="conclusion"></div>
+      </div>
+
+      <div class="q-grid" id="qGrid"></div>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-left">
+    <a href="https://gamesofarcadia.itch.io" target="_blank" style="text-decoration:none"><div class="goa-logo-sm">GoA</div></a>
+    <div class="footer-text">GAMES OF ARCADIA &nbsp;|&nbsp; COGNITIVE INFLUENCE RATING v1.0</div>
+  </div>
+  <div class="footer-right">&copy; <span class="yr"></span> GAMES OF ARCADIA - ALL RIGHTS RESERVED</div>
+</footer>
+
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+const MAX = 100000;
+const ENDPOINT = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-lite:generateContent';
+
+const QUESTIONS = [
+  { id:1,  name:'Emotional Manipulation',    desc:'Fear, outrage, or panic is used to push a reaction rather than inform.' },
+  { id:2,  name:'Designated Enemy',          desc:'A specific group, person, or entity is presented as purely evil, with no nuance.' },
+  { id:3,  name:'Saviour Figure',            desc:'A specific person, product, or movement is presented as the only solution.' },
+  { id:4,  name:'Tribal Division',           desc:'Content explicitly divides its audience into opposing, irreconcilable camps.' },
+  { id:5,  name:'False Simplicity',          desc:'A complex issue is reduced to one simple, convenient cause.' },
+  { id:6,  name:'Pressure to Act',           desc:'The audience is pushed to act immediately, with no time to think or verify.' },
+  { id:7,  name:'Evidence Vacuum',           desc:'Key claims are made with no data, studies, or verifiable sources.' },
+  { id:8,  name:'Shadow Sources',            desc:'Key information comes from unnamed, unverifiable, or deleted sources.' },
+  { id:9,  name:'Narrative Instability',     desc:'Story details shift or contradict each other, and key claims quietly disappear.' },
+  { id:10, name:'Symbolic Overload',         desc:'Heavy use of flags, colours, or emotionally charged symbols.' },
+  { id:11, name:'Slogan Engineering',        desc:'Key phrases repeat like slogans to embed a message rather than explain anything.' },
+  { id:12, name:'Moral Absolutism',          desc:'Questioning the narrative gets you labelled an enemy, traitor, or fool.' },
+  { id:13, name:'Hollow Authority',          desc:'Experts or institutions are named as proof, with no supporting data or study.' },
+  { id:14, name:'Herd Pressure',             desc:'Viral numbers or mass approval are used in place of actual evidence.' },
+  { id:15, name:'Apocalyptic Framing',       desc:'Catastrophic outcomes are presented as certain and imminent.' },
+  { id:16, name:'Miracle Promise',           desc:'The promised outcome is implausibly perfect or convenient.' },
+  { id:17, name:'Dissent Suppression',       desc:'Critics are called shills, bots, or paid agents instead of being addressed.' },
+  { id:18, name:'Suspicious Timing',         desc:'The story surfaces at a moment that happens to benefit specific interests.' },
+  { id:19, name:'Coordinated Amplification', desc:'The same message appears across multiple platforms at once, with no clear source.' },
+  { id:20, name:'Sealed Narrative',          desc:'No alternative perspectives are shown and debate is discouraged or dismissed.' }
+];
+
+const PROMPT = `You are a disinformation analyst. Score the given text against these 20 manipulation indicators.
+
+${QUESTIONS.map(q => `${q.id}. ${q.name}: ${q.desc}`).join('\n')}
+
+Scoring: 0 = absent, 1 = barely present, 2 = mild, 3 = clear, 4 = strong, 5 = overwhelming.
+
+Verdict thresholds:
+0-39: LOW PROBABILITY
+40-69: MODERATE PROBABILITY
+70-100: HIGH PROBABILITY
+
+Return ONLY valid JSON, no markdown, no backticks:
+{"scores":[{"id":1,"name":"Emotional Manipulation","score":0,"reason":"one sentence"},...],"total":0,"verdict":"LOW PROBABILITY","verdictClass":"vl","conclusion":"2-3 sentence assessment"}
+
+verdictClass must be exactly "vl", "vm", or "vh".`;
+
+// STATE
+let apiKey = '';
+let lastResult = null;
+
+// INIT
+(function init() {
+  document.querySelectorAll('.yr').forEach(el => el.textContent = new Date().getFullYear());
+
+  try { apiKey = localStorage.getItem('goa_psyop_key') || ''; } catch(e) { apiKey = ''; }
+
+  if (apiKey) {
+    setDot(true);
+  } else {
+    document.getElementById('setupModal').classList.remove('hidden');
+  }
+
+  bindEvents();
+})();
+
+function bindEvents() {
+  // Setup modal
+  document.getElementById('setupKeyInput').addEventListener('input', function() {
+    const ok = this.value.trim().length > 20;
+    document.getElementById('setupKeyCheck').style.display = ok ? 'block' : 'none';
+    const btn = document.getElementById('setupBtn');
+    btn.classList.toggle('on', ok);
+    document.getElementById('setupKeyErr').classList.remove('show');
+  });
+
+  document.getElementById('setupBtn').addEventListener('click', function() {
+    const key = document.getElementById('setupKeyInput').value.trim();
+    if (key.length < 20) return;
+    validateKey(key, 'setup');
+  });
+
+  // Change key modal
+  document.getElementById('keyBtn').addEventListener('click', function() {
+    document.getElementById('changeKeyInput').value = '';
+    document.getElementById('changeKeyCheck').style.display = 'none';
+    document.getElementById('changeKeyErr').classList.remove('show');
+    document.getElementById('changeKeyBtn').classList.remove('on');
+    document.getElementById('keyModal').classList.remove('hidden');
+  });
+
+  document.getElementById('changeKeyInput').addEventListener('input', function() {
+    const ok = this.value.trim().length > 20;
+    document.getElementById('changeKeyCheck').style.display = ok ? 'block' : 'none';
+    const btn = document.getElementById('changeKeyBtn');
+    btn.classList.toggle('on', ok);
+    document.getElementById('changeKeyErr').classList.remove('show');
+  });
+
+  document.getElementById('changeKeyBtn').addEventListener('click', function() {
+    const key = document.getElementById('changeKeyInput').value.trim();
+    if (key.length < 20) return;
+    validateKey(key, 'change');
+  });
+
+  document.getElementById('keyModalClose').addEventListener('click', function() {
+    document.getElementById('keyModal').classList.add('hidden');
+  });
+
+  document.getElementById('deleteKeyBtn').addEventListener('click', function() {
+    apiKey = '';
+    try { localStorage.removeItem('goa_psyop_key'); } catch(e) {}
+    setDot(false);
+    document.getElementById('keyModal').classList.add('hidden');
+    document.getElementById('setupModal').classList.remove('hidden');
+  });
+
+  // About modal
+  document.getElementById('aboutBtn').addEventListener('click', function() {
+    document.getElementById('aboutModal').classList.remove('hidden');
+  });
+
+  document.getElementById('aboutClose').addEventListener('click', function() {
+    document.getElementById('aboutModal').classList.add('hidden');
+  });
+
+  // Text input
+  document.getElementById('inputText').addEventListener('input', function() {
+    if (this.value.length > MAX) this.value = this.value.substring(0, MAX);
+    const len = this.value.length;
+    const el = document.getElementById('charCount');
+    el.textContent = len.toLocaleString() + ' / 100,000';
+    el.className = 'char-count' + (len > 90000 ? ' warn' : '') + (len >= MAX ? ' over' : '');
+    const hasText = this.value.trim().length > 50;
+    const btn = document.getElementById('processBtn');
+    btn.disabled = !hasText;
+    btn.classList.toggle('on', hasText);
+    showErr('');
+  });
+
+  // Process button
+  document.getElementById('processBtn').addEventListener('click', function() {
+    if (!this.disabled) runAnalysis();
+  });
+
+  // Copy button
+  document.getElementById('copyBtn').addEventListener('click', copyResults);
+
+  // Export button
+  document.getElementById('exportBtn').addEventListener('click', exportResults);
+}
+
+// KEY VALIDATION
+async function validateKey(key, mode) {
+  const btnId = mode === 'setup' ? 'setupBtn' : 'changeKeyBtn';
+  const errId = mode === 'setup' ? 'setupKeyErr' : 'changeKeyErr';
+  const btn = document.getElementById(btnId);
+
+  btn.querySelector('span').textContent = 'Validating...';
+  btn.classList.remove('on');
+
+  await new Promise(r => setTimeout(r, 800));
+
+  let valid = false;
+  try {
+    const res = await fetch(ENDPOINT + '?key=' + key, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        contents: [{ parts: [{ text: 'Reply: OK' }] }],
+        generationConfig: { maxOutputTokens: 5 }
+      })
+    });
+    valid = res.ok || res.status === 429;
+  } catch(e) {
+    valid = false;
+  }
+
+  if (valid) {
+    apiKey = key;
+    try { localStorage.setItem('goa_psyop_key', key); } catch(e) {}
+    if (mode === 'setup') {
+      document.getElementById('setupModal').classList.add('hidden');
+    } else {
+      document.getElementById('keyModal').classList.add('hidden');
+    }
+    setDot(true);
+  } else {
+    document.getElementById(errId).classList.add('show');
+    btn.querySelector('span').textContent = mode === 'setup' ? 'Validate & Continue' : 'Validate & Save';
+    btn.classList.add('on');
+  }
+}
+
+// ANALYSIS
+async function runAnalysis() {
+  if (!apiKey) { document.getElementById('keyModal').classList.remove('hidden'); return; }
+
+  const text = document.getElementById('inputText').value.trim();
+  if (text.length < 50) return;
+
+  setLoading(true);
+  showErr('');
+
+  try {
+    const body = {
+      contents: [{ parts: [{ text: PROMPT + '\n\nTEXT:\n\n' + text }] }],
+      generationConfig: { maxOutputTokens: 4096, temperature: 0.2 }
+    };
+
+    const res = await fetch(ENDPOINT + '?key=' + apiKey, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body)
+    });
+
+    if (res.status === 429) throw new Error('QUOTA');
+    if (res.status === 403 || res.status === 400) throw new Error('KEY');
+    if (!res.ok) throw new Error('API');
+
+    const data = await res.json();
+    let raw = (data?.candidates?.[0]?.content?.parts?.[0]?.text || '').replace(/```json|```/g, '').trim();
+    const result = JSON.parse(raw);
+    lastResult = result;
+
+    const usage = data.usageMetadata;
+    if (usage) {
+      const total = (usage.promptTokenCount || 0) + (usage.candidatesTokenCount || 0);
+      document.getElementById('usageVal').textContent = total.toLocaleString() + ' tokens used';
+      document.getElementById('usageBlock').classList.add('show');
+    }
+
+    renderResults(result);
+
+  } catch(e) {
+    const msgs = {
+      'QUOTA': 'Gemini free quota exceeded for today. Try again tomorrow or upgrade your plan at aistudio.google.com.',
+      'KEY': 'API key rejected. Click API KEY in the header to update it.',
+      'API': 'Unexpected error. Please try again.'
+    };
+    showErr(msgs[e.message] || msgs['API']);
+  } finally {
+    setLoading(false);
+  }
+}
+
+// RENDER
+function renderResults(data) {
+  document.getElementById('placeholder').style.display = 'none';
+  const wrap = document.getElementById('resultsWrap');
+  wrap.classList.add('show');
+
+  const grid = document.getElementById('qGrid');
+  grid.innerHTML = '';
+
+  data.scores.forEach((item, i) => {
+    const row = document.createElement('div');
+    row.className = 'q-row';
+    row.style.animationDelay = (i * 0.035) + 's';
+    row.innerHTML =
+      '<div class="q-name">' + item.name + '</div>' +
+      '<div class="q-score s' + item.score + '">' + item.score + '</div>' +
+      '<div class="q-reason">' + item.reason + '</div>';
+    grid.appendChild(row);
+  });
+
+  const vc = data.verdictClass;
+  document.getElementById('totalNum').textContent = data.total + '/100';
+  document.getElementById('totalNum').className = 'total-num ' + vc;
+  document.getElementById('totalVerdict').textContent = data.verdict;
+  document.getElementById('totalVerdict').className = 'total-verdict ' + vc;
+  document.getElementById('conclusion').textContent = data.conclusion;
+
+  setTimeout(() => {
+    document.getElementById('scoreFill').style.width = data.total + '%';
+  }, 150);
+
+  const shareText = encodeURIComponent('Cognitive Influence Rating score: ' + data.total + '/100 - ' + data.verdict + '\n\nAnalysed with Games of Arcadia Cognitive Influence Rating');
+  document.getElementById('shareX').href = 'https://twitter.com/intent/tweet?text=' + shareText;
+  document.getElementById('shareFB').href = 'https://www.facebook.com/sharer/sharer.php?quote=' + shareText;
+
+  setTimeout(() => wrap.scrollIntoView({ behavior: 'smooth', block: 'start' }), 200);
+}
+
+// COPY
+function copyResults() {
+  if (!lastResult) return;
+  const lines = [
+    'COGNITIVE INFLUENCE RATING - Games of Arcadia',
+    'Games of Arcadia - v1.0',
+    'Date: ' + new Date().toLocaleDateString(),
+    '',
+    '-- SCORES --',
+    ...lastResult.scores.map(s => String(s.id).padStart(2,'0') + '. ' + s.name + ': ' + s.score + '/5 - ' + s.reason),
+    '',
+    '-- TOTAL: ' + lastResult.total + '/100 - ' + lastResult.verdict + ' --',
+    '',
+    lastResult.conclusion,
+    '',
+    '(c) Games of Arcadia. All rights reserved.'
+  ];
+  navigator.clipboard.writeText(lines.join('\n')).then(() => {
+    const btn = document.getElementById('copyBtn');
+    btn.textContent = 'COPIED';
+    btn.classList.add('done');
+    setTimeout(() => { btn.textContent = '\u2318 COPY RESULTS'; btn.classList.remove('done'); }, 2000);
+  });
+}
+
+// EXPORT
+function exportResults() {
+  if (!lastResult) return;
+  const lines = [
+    'COGNITIVE INFLUENCE RATING - Games of Arcadia',
+    'Games of Arcadia - v1.0',
+    'Analysis Date: ' + new Date().toLocaleString(),
+    '',
+    '============================================',
+    'INDICATOR SCORES',
+    '============================================',
+    ...lastResult.scores.map(s => String(s.id).padStart(2,'0') + '. ' + s.name + '\n    Score: ' + s.score + '/5\n    ' + s.reason),
+    '',
+    '============================================',
+    'TOTAL SCORE: ' + lastResult.total + ' / 100',
+    'VERDICT: ' + lastResult.verdict,
+    '============================================',
+    '',
+    'CONCLUSION:',
+    lastResult.conclusion,
+    '',
+    '--------------------------------------------',
+    '(c) Games of Arcadia. All rights reserved.',
+    'The Cognitive Influence Rating framework is an original Games of Arcadia tool powered by Gemini and inspired by open media literacy research including the Narrative Credibility Index.'
+  ];
+  const blob = new Blob([lines.join('\n')], { type: 'text/plain' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'cir_analysis_' + Date.now() + '.txt';
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+// HELPERS
+function setLoading(on) {
+  document.getElementById('loader').classList.toggle('show', on);
+  document.getElementById('processBtn').style.visibility = on ? 'hidden' : 'visible';
+}
+
+function showErr(msg) {
+  const el = document.getElementById('errorBar');
+  el.textContent = msg;
+  el.classList.toggle('show', !!msg);
+}
+
+function setDot(on) {
+  document.getElementById('statusDot').classList.toggle('live', on);
+}
+</script>
+</body>
+</html>
