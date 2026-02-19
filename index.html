@@ -482,6 +482,38 @@ textarea::placeholder { color: var(--text-dim); opacity: 0.5; }
 }
 .error-bar.show { display: block; }
 
+/* MODEL SELECTOR */
+.model-select-wrap {
+  border: 1px solid var(--border);
+  background: var(--surface2);
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.model-select-lbl {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 2px;
+  color: var(--text-dim);
+  white-space: nowrap;
+}
+.model-select-wrap select {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  color: var(--accent);
+  font-family: var(--mono);
+  font-size: 12px;
+  padding: 6px 10px;
+  outline: none;
+  cursor: pointer;
+  flex: 1;
+  transition: border-color 0.2s;
+}
+.model-select-wrap select:focus { border-color: var(--accent); }
+.model-select-wrap select option { background: var(--surface2); color: var(--text); }
+
 /* INFO BLOCK */
 .info-block {
   border: 1px solid var(--border);
@@ -659,9 +691,8 @@ textarea::placeholder { color: var(--text-dim); opacity: 0.5; }
 .score-track { height: 3px; background: var(--border); margin-bottom: 14px; }
 .score-fill {
   height: 3px;
-  background: linear-gradient(90deg, var(--score-low) 0%, var(--score-mid) 50%, var(--score-high) 100%);
   width: 0%;
-  transition: width 1s ease;
+  transition: width 1s ease, background-color 1s ease;
 }
 
 .conclusion {
@@ -772,8 +803,8 @@ footer {
       <span class="field-check" id="changeKeyCheck">&#10003;</span>
     </div>
     <div class="field-err" id="changeKeyErr">Invalid or inactive key. Please check and try again.</div>
-    <button class="main-btn" id="changeKeyBtn"><span>Validate &amp; Save</span></button>
-    <button class="main-btn" id="deleteKeyBtn" style="margin-top:8px;border-color:var(--danger);color:var(--danger);cursor:pointer;" class="on"><span>&#10005; Delete Saved Key</span></button>
+    <button class="main-btn on" id="changeKeyBtn"><span>Validate &amp; Save</span></button>
+    <button class="main-btn" id="deleteKeyBtn" style="margin-top:8px;border-color:var(--danger);color:var(--danger);cursor:pointer;"><span>&#10005; Delete Saved Key</span></button>
   </div>
 </div>
 
@@ -818,10 +849,19 @@ footer {
       <span class="usage-val" id="usageVal">-</span>
     </div>
 
+    <div class="model-select-wrap">
+      <span class="model-select-lbl">// MODEL</span>
+      <select id="modelSelect">
+        <option value="gemini-2.5-flash-lite">Gemini 2.5 Flash Lite</option>
+        <option value="gemini-2.5-flash">Gemini 2.5 Flash</option>
+        <option value="gemini-2.5-pro">Gemini 2.5 Pro</option>
+      </select>
+    </div>
+
     <div class="info-block">
       <div class="info-title">// Google Gemini API - Key Policy</div>
-      <div class="info-row">&#9889; <strong>Free tier:</strong> ~1,000 analyses per day. Resets automatically every 24 hours.</div>
-      <div class="info-row">&#128176; <strong>Cost:</strong> a free key covers standard daily usage. If you need more, you can enable billing in Google AI Studio - a typical analysis costs under one cent.</div>
+      <div class="info-row">&#9889; <strong>Free tier limits vary by model and account.</strong> Check your current quota at <a href="https://aistudio.google.com" target="_blank" style="color:var(--accent);font-family:var(--mono);font-size:13px;">aistudio.google.com</a>.</div>
+      <div class="info-row">&#128176; <strong>Cost:</strong> if you need more requests, you can enable billing in Google AI Studio. A typical analysis costs under one cent.</div>
       <div class="info-row">&#128274; <strong>Privacy:</strong> your text goes only to Google's servers. Nothing is stored by Games of Arcadia.</div>
     </div>
   </div>
@@ -868,9 +908,14 @@ footer {
   <div class="footer-right">&copy; <span class="yr"></span> GAMES OF ARCADIA - ALL RIGHTS RESERVED</div>
 </footer>
 
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+<script>
 const MAX = 100000;
-const ENDPOINT = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-lite:generateContent';
+const BASE_ENDPOINT = 'https://generativelanguage.googleapis.com/v1beta/models/';
+
+function getEndpoint() {
+  const model = document.getElementById('modelSelect').value;
+  return BASE_ENDPOINT + model + ':generateContent';
+}
 
 const QUESTIONS = [
   { id:1,  name:'Emotional Manipulation',    desc:'Fear, outrage, or panic is used to push a reaction rather than inform.' },
@@ -918,25 +963,20 @@ let lastResult = null;
 // INIT
 (function init() {
   document.querySelectorAll('.yr').forEach(el => el.textContent = new Date().getFullYear());
-
   try { apiKey = localStorage.getItem('goa_psyop_key') || ''; } catch(e) { apiKey = ''; }
-
   if (apiKey) {
     setDot(true);
   } else {
     document.getElementById('setupModal').classList.remove('hidden');
   }
-
   bindEvents();
 })();
 
 function bindEvents() {
-  // Setup modal
   document.getElementById('setupKeyInput').addEventListener('input', function() {
     const ok = this.value.trim().length > 20;
     document.getElementById('setupKeyCheck').style.display = ok ? 'block' : 'none';
-    const btn = document.getElementById('setupBtn');
-    btn.classList.toggle('on', ok);
+    document.getElementById('setupBtn').classList.toggle('on', ok);
     document.getElementById('setupKeyErr').classList.remove('show');
   });
 
@@ -946,7 +986,6 @@ function bindEvents() {
     validateKey(key, 'setup');
   });
 
-  // Change key modal
   document.getElementById('keyBtn').addEventListener('click', function() {
     document.getElementById('changeKeyInput').value = '';
     document.getElementById('changeKeyCheck').style.display = 'none';
@@ -958,8 +997,7 @@ function bindEvents() {
   document.getElementById('changeKeyInput').addEventListener('input', function() {
     const ok = this.value.trim().length > 20;
     document.getElementById('changeKeyCheck').style.display = ok ? 'block' : 'none';
-    const btn = document.getElementById('changeKeyBtn');
-    btn.classList.toggle('on', ok);
+    document.getElementById('changeKeyBtn').classList.toggle('on', ok);
     document.getElementById('changeKeyErr').classList.remove('show');
   });
 
@@ -981,7 +1019,6 @@ function bindEvents() {
     document.getElementById('setupModal').classList.remove('hidden');
   });
 
-  // About modal
   document.getElementById('aboutBtn').addEventListener('click', function() {
     document.getElementById('aboutModal').classList.remove('hidden');
   });
@@ -990,7 +1027,6 @@ function bindEvents() {
     document.getElementById('aboutModal').classList.add('hidden');
   });
 
-  // Text input
   document.getElementById('inputText').addEventListener('input', function() {
     if (this.value.length > MAX) this.value = this.value.substring(0, MAX);
     const len = this.value.length;
@@ -1004,19 +1040,14 @@ function bindEvents() {
     showErr('');
   });
 
-  // Process button
   document.getElementById('processBtn').addEventListener('click', function() {
     if (!this.disabled) runAnalysis();
   });
 
-  // Copy button
   document.getElementById('copyBtn').addEventListener('click', copyResults);
-
-  // Export button
   document.getElementById('exportBtn').addEventListener('click', exportResults);
 }
 
-// KEY VALIDATION
 async function validateKey(key, mode) {
   const btnId = mode === 'setup' ? 'setupBtn' : 'changeKeyBtn';
   const errId = mode === 'setup' ? 'setupKeyErr' : 'changeKeyErr';
@@ -1029,7 +1060,7 @@ async function validateKey(key, mode) {
 
   let valid = false;
   try {
-    const res = await fetch(ENDPOINT + '?key=' + key, {
+    const res = await fetch(getEndpoint() + '?key=' + key, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -1045,11 +1076,7 @@ async function validateKey(key, mode) {
   if (valid) {
     apiKey = key;
     try { localStorage.setItem('goa_psyop_key', key); } catch(e) {}
-    if (mode === 'setup') {
-      document.getElementById('setupModal').classList.add('hidden');
-    } else {
-      document.getElementById('keyModal').classList.add('hidden');
-    }
+    document.getElementById(mode === 'setup' ? 'setupModal' : 'keyModal').classList.add('hidden');
     setDot(true);
   } else {
     document.getElementById(errId).classList.add('show');
@@ -1058,7 +1085,6 @@ async function validateKey(key, mode) {
   }
 }
 
-// ANALYSIS
 async function runAnalysis() {
   if (!apiKey) { document.getElementById('keyModal').classList.remove('hidden'); return; }
 
@@ -1074,7 +1100,7 @@ async function runAnalysis() {
       generationConfig: { maxOutputTokens: 4096, temperature: 0.2 }
     };
 
-    const res = await fetch(ENDPOINT + '?key=' + apiKey, {
+    const res = await fetch(getEndpoint() + '?key=' + apiKey, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(body)
@@ -1110,7 +1136,6 @@ async function runAnalysis() {
   }
 }
 
-// RENDER
 function renderResults(data) {
   document.getElementById('placeholder').style.display = 'none';
   const wrap = document.getElementById('resultsWrap');
@@ -1137,8 +1162,11 @@ function renderResults(data) {
   document.getElementById('totalVerdict').className = 'total-verdict ' + vc;
   document.getElementById('conclusion').textContent = data.conclusion;
 
+  const fill = document.getElementById('scoreFill');
+  const barColor = data.total < 40 ? '#2a9d8f' : data.total < 70 ? '#e9c46a' : '#e63946';
   setTimeout(() => {
-    document.getElementById('scoreFill').style.width = data.total + '%';
+    fill.style.width = data.total + '%';
+    fill.style.backgroundColor = barColor;
   }, 150);
 
   const shareText = encodeURIComponent('Cognitive Influence Rating score: ' + data.total + '/100 - ' + data.verdict + '\n\nAnalysed with Games of Arcadia Cognitive Influence Rating');
@@ -1148,7 +1176,6 @@ function renderResults(data) {
   setTimeout(() => wrap.scrollIntoView({ behavior: 'smooth', block: 'start' }), 200);
 }
 
-// COPY
 function copyResults() {
   if (!lastResult) return;
   const lines = [
@@ -1173,7 +1200,6 @@ function copyResults() {
   });
 }
 
-// EXPORT
 function exportResults() {
   if (!lastResult) return;
   const lines = [
@@ -1207,7 +1233,6 @@ function exportResults() {
   URL.revokeObjectURL(url);
 }
 
-// HELPERS
 function setLoading(on) {
   document.getElementById('loader').classList.toggle('show', on);
   document.getElementById('processBtn').style.visibility = on ? 'hidden' : 'visible';
