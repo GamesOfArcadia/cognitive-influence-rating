@@ -98,7 +98,7 @@ body::before {
 
 .modal-tag {
   font-family: var(--mono);
-  font-size: 11px;
+  font-size: 13px;
   letter-spacing: 3px;
   color: var(--accent);
   text-transform: uppercase;
@@ -131,7 +131,7 @@ body::before {
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  margin-top: 2px;
+  align-self: flex-start;
 }
 
 .step-body {
@@ -747,9 +747,9 @@ footer {
 <!-- SETUP MODAL -->
 <div class="modal hidden" id="setupModal">
   <div class="modal-box" style="padding-bottom:90px">
-    <div style="font-family:var(--cond);font-weight:900;font-size:30px;color:var(--text-bright);letter-spacing:2px;text-transform:uppercase;margin-bottom:6px">Cognitive <span style="color:var(--accent2)">Influence Rating</span></div>
-    <div class="modal-tag" style="margin-bottom:20px">// One-time setup</div>
-    <div class="modal-heading">You need a Google<br>Gemini API key to begin.</div>
+    <div style="font-family:var(--cond);font-weight:900;font-size:36px;color:var(--text-bright);letter-spacing:2px;text-transform:uppercase;margin-bottom:6px;text-align:center">Cognitive <span style="color:var(--accent2)">Influence Rating</span></div>
+    <div class="modal-tag" style="margin-bottom:20px">&nbsp;// One-time setup</div>
+    <div class="modal-heading" style="font-size:26px;text-align:center;white-space:nowrap;margin-top:40px">You need a Google Gemini API key to begin.</div>
 
     <div class="step">
       <div class="step-num">01</div>
@@ -763,15 +763,13 @@ footer {
 
     <div class="step">
       <div class="step-num">03</div>
-      <div class="step-body">
-        Paste your key below.
-        <div class="field-wrap">
-          <input type="text" id="setupKeyInput" placeholder="AIza..." autocomplete="off">
-          <span class="field-check" id="setupKeyCheck">&#10003;</span>
-        </div>
-        <div class="field-err" id="setupKeyErr">Invalid or inactive key. Please check and try again.</div>
-      </div>
+      <div class="step-body">Paste your key below.</div>
     </div>
+    <div class="field-wrap">
+      <input type="text" id="setupKeyInput" placeholder="AIza..." autocomplete="off">
+      <span class="field-check" id="setupKeyCheck">&#10003;</span>
+    </div>
+    <div class="field-err" id="setupKeyErr">Invalid or inactive key. Please check and try again.</div>
 
     <button class="main-btn" id="setupBtn"><span>Validate &amp; Continue</span></button>
     <div style="font-family:var(--mono);font-size:11px;color:var(--text-dim);text-align:center;position:absolute;bottom:16px;left:0;right:0;letter-spacing:1px">&copy; <span class="yr"></span> Games of Arcadia. All rights reserved.</div>
