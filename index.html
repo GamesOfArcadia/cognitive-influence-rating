@@ -821,7 +821,6 @@ footer {
     <div style="margin-bottom:20px">
       <div style="font-family:var(--cond);font-size:18px;font-weight:700;color:var(--accent2);letter-spacing:1px;margin-bottom:10px">v1.1</div>
       <div style="font-family:var(--mono);font-size:12px;color:var(--text-dim);margin-bottom:8px;letter-spacing:1px">Model selector - choose between Gemini 2.5 Flash Lite, Flash, and Pro depending on your quota and quality needs.</div>
-      <div style="font-family:var(--mono);font-size:12px;color:var(--text-dim);letter-spacing:1px">Score bar now displays a single solid colour matching the verdict: green, yellow, or red.</div>
     </div>
 
     <div>
@@ -1195,9 +1194,22 @@ function renderResults(data) {
   document.getElementById('conclusion').textContent = data.conclusion;
 
   const fill = document.getElementById('scoreFill');
-  const barColor = data.total < 40 ? '#2a9d8f' : data.total < 70 ? '#e9c46a' : '#e63946';
+  const score = data.total;
+  let r, g, b;
+  if (score <= 50) {
+    const t = score / 50;
+    r = Math.round(0x2a + t * (0xe9 - 0x2a));
+    g = Math.round(0x9d + t * (0xc4 - 0x9d));
+    b = Math.round(0x8f + t * (0x6a - 0x8f));
+  } else {
+    const t = (score - 50) / 50;
+    r = Math.round(0xe9 + t * (0xe6 - 0xe9));
+    g = Math.round(0xc4 + t * (0x39 - 0xc4));
+    b = Math.round(0x6a + t * (0x46 - 0x6a));
+  }
+  const barColor = `rgb(${r},${g},${b})`;
   setTimeout(() => {
-    fill.style.width = data.total + '%';
+    fill.style.width = score + '%';
     fill.style.backgroundColor = barColor;
   }, 150);
 
