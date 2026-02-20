@@ -501,7 +501,13 @@ textarea::placeholder { color: var(--text-dim); opacity: 0.5; }
   justify-content: space-between;
   gap: 12px;
 }
-.model-select-lbl {
+.model-hint {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
   font-family: var(--cond);
   font-size: 14px;
   font-weight: 700;
@@ -553,16 +559,18 @@ textarea::placeholder { color: var(--text-dim); opacity: 0.5; }
 }
 .info-row strong { color: var(--text); font-weight: 500; }
 
-/* USAGE BLOCK */
-.usage-block {
-  border: 1px solid var(--border);
-  background: var(--surface2);
-  padding: 12px 16px;
-  display: none;
-  justify-content: space-between;
-  align-items: center;
+/* ACTION ROW */
+.action-row {
+  display: flex;
+  gap: 10px;
+  align-items: stretch;
 }
-.usage-block.show { display: flex; }
+.action-row .process-btn {
+  flex: 1;
+}
+.action-row .model-select-wrap {
+  flex: 1;
+}
 .usage-lbl { font-family: var(--mono); font-size: 11px; letter-spacing: 2px; color: var(--text-dim); }
 .usage-val { font-family: var(--mono); font-size: 13px; color: var(--accent); }
 
@@ -789,7 +797,7 @@ footer {
   <div class="modal-box">
     <button class="modal-close" id="aboutClose">&#10005;</button>
     <div style="display:inline-flex;align-items:center;justify-content:center;width:72px;height:72px;background:#000;border:1px solid #333;font-family:var(--cond);font-weight:900;font-size:26px;color:#fff;letter-spacing:1px;margin-bottom:20px">GoA</div>
-    <div class="modal-heading" style="font-size:28px;margin-bottom:20px">Cognitive Influence Rating v1.1</div>
+    <div class="modal-heading" style="font-size:28px;margin-bottom:20px">Cognitive Influence Rating v1.2</div>
     <div class="about-text" style="font-size:16px;line-height:1.9">Cognitive Influence Rating analyses any text (article, transcript, speech, or social media post) and scores it against 20 indicators of psychological manipulation, disinformation architecture, and narrative engineering.</div>
     <div class="about-text" style="font-size:16px;line-height:1.9">The tool does not determine truth or falsehood. A high score means the content uses techniques commonly found in influence operations. What you do with that information is up to you.</div>
     <div class="about-text" style="font-size:16px;line-height:1.9">Your API key is stored locally on your device. No data you submit is stored or logged by Games of Arcadia.</div>
@@ -825,11 +833,17 @@ footer {
     <div class="modal-heading" style="font-size:24px;margin-bottom:24px">Changelog</div>
 
     <div style="margin-bottom:20px">
-      <div style="font-family:var(--cond);font-size:18px;font-weight:700;color:var(--accent2);letter-spacing:1px;margin-bottom:10px">v1.1</div>
-      <div style="font-family:var(--mono);font-size:12px;color:var(--text-dim);margin-bottom:8px;letter-spacing:1px">Model selector - choose between Gemini 2.5 Flash Lite, Flash, and Pro depending on your quota and quality needs.</div>
+      <div style="font-family:var(--cond);font-size:18px;font-weight:700;color:var(--accent2);letter-spacing:1px;margin-bottom:10px">v1.2</div>
+      <div style="font-family:var(--mono);font-size:12px;color:var(--text-dim);margin-bottom:8px;letter-spacing:1px">Gemini 2.5 Flash is now the default model. Model selector now shows a contextual hint (Recommended / Less Accurate / Untested) depending on selection.</div>
+      <div style="font-family:var(--mono);font-size:12px;color:var(--text-dim);letter-spacing:1px">Process button and model selector reorganised into a single row. Token usage panel removed.</div>
     </div>
 
-    <div>
+    <div style="margin-bottom:20px;opacity:0.45">
+      <div style="font-family:var(--cond);font-size:18px;font-weight:700;color:var(--text-dim);letter-spacing:1px;margin-bottom:10px">v1.1</div>
+      <div style="font-family:var(--mono);font-size:12px;color:var(--text-dim);letter-spacing:1px">Model selector - choose between Gemini 2.5 Flash Lite, Flash, and Pro depending on your quota and quality needs.</div>
+    </div>
+
+    <div style="opacity:0.45">
       <div style="font-family:var(--cond);font-size:18px;font-weight:700;color:var(--text-dim);letter-spacing:1px;margin-bottom:10px">v1.0</div>
       <div style="font-family:var(--mono);font-size:12px;color:var(--text-dim);letter-spacing:1px">Initial release. 20-indicator CIR scoring, Gemini API integration, copy, export, and share functions.</div>
     </div>
@@ -866,25 +880,24 @@ footer {
 
     <div class="error-bar" id="errorBar"></div>
 
-    <button class="process-btn" id="processBtn" disabled><span>&#9654;&nbsp; PROCESS</span></button>
+    <div class="action-row">
+      <button class="process-btn" id="processBtn" disabled><span>&#9654;&nbsp; PROCESS</span></button>
+      <div class="model-select-wrap">
+        <div style="display:flex;flex-direction:column;gap:4px">
+          <span class="model-select-lbl">Model</span>
+          <span class="model-hint" id="modelHint"></span>
+        </div>
+        <select id="modelSelect">
+          <option value="gemini-2.5-flash-lite">Gemini 2.5 Flash Lite</option>
+          <option value="gemini-2.5-flash" selected>Gemini 2.5 Flash</option>
+          <option value="gemini-2.5-pro">Gemini 2.5 Pro</option>
+        </select>
+      </div>
+    </div>
 
     <div class="loader" id="loader">
       <div class="dots"><span></span><span></span><span></span></div>
       ANALYZING...
-    </div>
-
-    <div class="usage-block" id="usageBlock">
-      <span class="usage-lbl">LAST REQUEST</span>
-      <span class="usage-val" id="usageVal">-</span>
-    </div>
-
-    <div class="model-select-wrap">
-      <span class="model-select-lbl">// MODEL</span>
-      <select id="modelSelect">
-        <option value="gemini-2.5-flash-lite">Gemini 2.5 Flash Lite</option>
-        <option value="gemini-2.5-flash">Gemini 2.5 Flash</option>
-        <option value="gemini-2.5-pro">Gemini 2.5 Pro</option>
-      </select>
     </div>
 
     <div class="info-block">
@@ -932,7 +945,7 @@ footer {
 <footer>
   <div class="footer-left">
     <a href="https://www.instagram.com/gamesofarcadia/" target="_blank" style="text-decoration:none"><div class="goa-logo-sm">GoA</div></a>
-    <div class="footer-text">GAMES OF ARCADIA &nbsp;|&nbsp; COGNITIVE INFLUENCE RATING v1.1</div>
+    <div class="footer-text">GAMES OF ARCADIA &nbsp;|&nbsp; COGNITIVE INFLUENCE RATING v1.2</div>
   </div>
   <div class="footer-right">&copy; <span class="yr"></span> GAMES OF ARCADIA - ALL RIGHTS RESERVED</div>
 </footer>
@@ -1081,8 +1094,26 @@ function bindEvents() {
     if (!this.disabled) runAnalysis();
   });
 
+  document.getElementById('modelSelect').addEventListener('change', updateModelHint);
+  updateModelHint();
+
   document.getElementById('copyBtn').addEventListener('click', copyResults);
   document.getElementById('exportBtn').addEventListener('click', exportResults);
+}
+
+function updateModelHint() {
+  const val = document.getElementById('modelSelect').value;
+  const hint = document.getElementById('modelHint');
+  if (val === 'gemini-2.5-flash') {
+    hint.textContent = '✓ Recommended';
+    hint.style.color = 'var(--accent)';
+  } else if (val === 'gemini-2.5-flash-lite') {
+    hint.textContent = '⚠ Less accurate';
+    hint.style.color = 'var(--warn)';
+  } else if (val === 'gemini-2.5-pro') {
+    hint.textContent = '? Untested';
+    hint.style.color = 'var(--text-dim)';
+  }
 }
 
 async function validateKey(key, mode) {
@@ -1151,13 +1182,6 @@ async function runAnalysis() {
     let raw = (data?.candidates?.[0]?.content?.parts?.[0]?.text || '').replace(/```json|```/g, '').trim();
     const result = JSON.parse(raw);
     lastResult = result;
-
-    const usage = data.usageMetadata;
-    if (usage) {
-      const total = (usage.promptTokenCount || 0) + (usage.candidatesTokenCount || 0);
-      document.getElementById('usageVal').textContent = total.toLocaleString() + ' tokens used';
-      document.getElementById('usageBlock').classList.add('show');
-    }
 
     renderResults(result);
 
@@ -1230,7 +1254,7 @@ function copyResults() {
   if (!lastResult) return;
   const lines = [
     'COGNITIVE INFLUENCE RATING - Games of Arcadia',
-    'Games of Arcadia - v1.1',
+    'Games of Arcadia - v1.2',
     'Date: ' + new Date().toLocaleDateString(),
     '',
     '-- SCORES --',
@@ -1254,7 +1278,7 @@ function exportResults() {
   if (!lastResult) return;
   const lines = [
     'COGNITIVE INFLUENCE RATING - Games of Arcadia',
-    'Games of Arcadia - v1.1',
+    'Games of Arcadia - v1.2',
     'Analysis Date: ' + new Date().toLocaleString(),
     '',
     '============================================',
