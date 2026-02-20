@@ -1176,22 +1176,28 @@ async function runAnalysis() {
 
     if (res.status === 429) throw new Error('QUOTA');
     if (res.status === 403 || res.status === 400) throw new Error('KEY');
-    if (!res.ok) throw new Error('API');
+    if (!res.ok) {
+      const errBody = await res.json().catch(() => null);
+      const errMsg = errBody?.error?.message || 'No details';
+      console.error('Gemini API error:', res.status, errBody);
+      throw new Error('HTTP_' + res.status + ': ' + errMsg);
+    }
 
     const data = await res.json();
     let raw = (data?.candidates?.[0]?.content?.parts?.[0]?.text || '').replace(/```json|```/g, '').trim();
+    console.log('Raw Gemini response:', raw);
     const result = JSON.parse(raw);
     lastResult = result;
 
     renderResults(result);
 
   } catch(e) {
+    console.error('Analysis error:', e);
     const msgs = {
       'QUOTA': 'Gemini free quota exceeded for today. Try again tomorrow or upgrade your plan at aistudio.google.com.',
       'KEY': 'API key rejected. Click API KEY in the header to update it.',
-      'API': 'Unexpected error. Please try again.'
     };
-    showErr(msgs[e.message] || msgs['API']);
+    showErr(msgs[e.message] || 'Error: ' + e.message);
   } finally {
     setLoading(false);
   }
