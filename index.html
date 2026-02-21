@@ -497,24 +497,8 @@ textarea::placeholder { color: var(--text-dim); opacity: 0.5; }
   background: var(--surface2);
   padding: 12px 16px;
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-}
-.model-hint {
-  font-family: var(--mono);
-  font-size: 10px;
-  letter-spacing: 1px;
-  text-transform: uppercase;
-  white-space: nowrap;
-}
-  font-family: var(--cond);
-  font-size: 14px;
-  font-weight: 700;
-  letter-spacing: 2px;
-  color: var(--text-dim);
-  text-transform: uppercase;
-  white-space: nowrap;
+  flex-direction: column;
+  gap: 8px;
 }
 .model-select-wrap select {
   background: var(--bg);
@@ -525,7 +509,7 @@ textarea::placeholder { color: var(--text-dim); opacity: 0.5; }
   padding: 6px 10px;
   outline: none;
   cursor: pointer;
-  width: 220px;
+  width: 100%;
   transition: border-color 0.2s;
 }
 .model-select-wrap select:focus { border-color: var(--accent); }
@@ -797,7 +781,7 @@ footer {
   <div class="modal-box">
     <button class="modal-close" id="aboutClose">&#10005;</button>
     <div style="display:inline-flex;align-items:center;justify-content:center;width:72px;height:72px;background:#000;border:1px solid #333;font-family:var(--cond);font-weight:900;font-size:26px;color:#fff;letter-spacing:1px;margin-bottom:20px">GoA</div>
-    <div class="modal-heading" style="font-size:28px;margin-bottom:20px">Cognitive Influence Rating v1.2.1</div>
+    <div class="modal-heading" style="font-size:28px;margin-bottom:20px">Cognitive Influence Rating v1.3</div>
     <div class="about-text" style="font-size:16px;line-height:1.9">Cognitive Influence Rating analyses any text (article, transcript, speech, or social media post) and scores it against 20 indicators of psychological manipulation, disinformation architecture, and narrative engineering.</div>
     <div class="about-text" style="font-size:16px;line-height:1.9">The tool does not determine truth or falsehood. A high score means the content uses techniques commonly found in influence operations. What you do with that information is up to you.</div>
     <div class="about-text" style="font-size:16px;line-height:1.9">Your API key is stored locally on your device. No data you submit is stored or logged by Games of Arcadia.</div>
@@ -833,23 +817,33 @@ footer {
     <div class="modal-heading" style="font-size:24px;margin-bottom:24px">Changelog</div>
 
     <div style="margin-bottom:20px">
-      <div style="font-family:var(--cond);font-size:18px;font-weight:700;color:var(--accent2);letter-spacing:1px;margin-bottom:10px">v1.2.1</div>
+      <div style="font-family:var(--cond);font-size:18px;font-weight:700;color:var(--accent2);letter-spacing:1px;margin-bottom:4px">v1.3</div>
+      <div style="font-family:var(--mono);font-size:10px;color:var(--text-dim);letter-spacing:1px;margin-bottom:10px">Feb 2026</div>
+      <div style="font-family:var(--mono);font-size:12px;color:var(--text-dim);margin-bottom:8px;letter-spacing:1px">Model selector redesigned to match panel style. Misleading accuracy hints removed.</div>
+      <div style="font-family:var(--mono);font-size:12px;color:var(--text-dim);letter-spacing:1px">New // About Results block added explaining model variance, score reliability, and context limitations.</div>
+    </div>
+
+    <div style="margin-bottom:20px;opacity:0.45">
+      <div style="font-family:var(--cond);font-size:18px;font-weight:700;color:var(--text-dim);letter-spacing:1px;margin-bottom:4px">v1.2.1</div>
+      <div style="font-family:var(--mono);font-size:10px;color:var(--text-dim);letter-spacing:1px;margin-bottom:10px">Feb 2026</div>
       <div style="font-family:var(--mono);font-size:12px;color:var(--text-dim);letter-spacing:1px">Increased max output tokens from 4096 to 8192 to prevent JSON truncation errors on longer texts.</div>
     </div>
 
     <div style="margin-bottom:20px;opacity:0.45">
-      <div style="font-family:var(--cond);font-size:18px;font-weight:700;color:var(--text-dim);letter-spacing:1px;margin-bottom:10px">v1.2</div>
-      <div style="font-family:var(--mono);font-size:12px;color:var(--text-dim);margin-bottom:8px;letter-spacing:1px">Gemini 2.5 Flash is now the default model. Model selector now shows a contextual hint (Recommended / Less Accurate / Untested) depending on selection.</div>
-      <div style="font-family:var(--mono);font-size:12px;color:var(--text-dim);letter-spacing:1px">Process button and model selector reorganised into a single row. Token usage panel removed.</div>
+      <div style="font-family:var(--cond);font-size:18px;font-weight:700;color:var(--text-dim);letter-spacing:1px;margin-bottom:4px">v1.2</div>
+      <div style="font-family:var(--mono);font-size:10px;color:var(--text-dim);letter-spacing:1px;margin-bottom:10px">Feb 2026</div>
+      <div style="font-family:var(--mono);font-size:12px;color:var(--text-dim);margin-bottom:8px;letter-spacing:1px">Gemini 2.5 Flash set as default model. Process button and model selector in single row. Token usage panel removed.</div>
     </div>
 
     <div style="margin-bottom:20px;opacity:0.45">
-      <div style="font-family:var(--cond);font-size:18px;font-weight:700;color:var(--text-dim);letter-spacing:1px;margin-bottom:10px">v1.1</div>
-      <div style="font-family:var(--mono);font-size:12px;color:var(--text-dim);letter-spacing:1px">Model selector - choose between Gemini 2.5 Flash Lite, Flash, and Pro depending on your quota and quality needs.</div>
+      <div style="font-family:var(--cond);font-size:18px;font-weight:700;color:var(--text-dim);letter-spacing:1px;margin-bottom:4px">v1.1</div>
+      <div style="font-family:var(--mono);font-size:10px;color:var(--text-dim);letter-spacing:1px;margin-bottom:10px">Feb 2026</div>
+      <div style="font-family:var(--mono);font-size:12px;color:var(--text-dim);letter-spacing:1px">Model selector added - choose between Gemini 2.5 Flash Lite, Flash, and Pro.</div>
     </div>
 
     <div style="opacity:0.45">
-      <div style="font-family:var(--cond);font-size:18px;font-weight:700;color:var(--text-dim);letter-spacing:1px;margin-bottom:10px">v1.0</div>
+      <div style="font-family:var(--cond);font-size:18px;font-weight:700;color:var(--text-dim);letter-spacing:1px;margin-bottom:4px">v1.0</div>
+      <div style="font-family:var(--mono);font-size:10px;color:var(--text-dim);letter-spacing:1px;margin-bottom:10px">Feb 2026</div>
       <div style="font-family:var(--mono);font-size:12px;color:var(--text-dim);letter-spacing:1px">Initial release. 20-indicator CIR scoring, Gemini API integration, copy, export, and share functions.</div>
     </div>
   </div>
@@ -888,10 +882,7 @@ footer {
     <div class="action-row">
       <button class="process-btn" id="processBtn" disabled><span>&#9654;&nbsp; PROCESS</span></button>
       <div class="model-select-wrap">
-        <div style="display:flex;flex-direction:column;gap:4px">
-          <span class="model-select-lbl">Model</span>
-          <span class="model-hint" id="modelHint"></span>
-        </div>
+        <div class="panel-label">// Model</div>
         <select id="modelSelect">
           <option value="gemini-2.5-flash-lite">Gemini 2.5 Flash Lite</option>
           <option value="gemini-2.5-flash" selected>Gemini 2.5 Flash</option>
@@ -903,6 +894,13 @@ footer {
     <div class="loader" id="loader">
       <div class="dots"><span></span><span></span><span></span></div>
       ANALYZING...
+    </div>
+
+    <div class="info-block">
+      <div class="info-title">// About Results</div>
+      <div class="info-row">&#8644; <strong>Model matters:</strong> Different models analyse differently. Flash may miss subtle stylistic manipulation while Lite can be more sensitive to it. If a result surprises you, try the other model.</div>
+      <div class="info-row">&#128202; <strong>Scores are indicative:</strong> Minor variations between runs on the same model are normal. For a more confident result, analyse 2-3 times - scores should stay in the same range, and averaging them gives a more reliable picture.</div>
+      <div class="info-row">&#9888; <strong>Context is invisible:</strong> The tool only sees the text. It cannot factor in the author's history, tone of voice, or intent. Use your judgment alongside the score.</div>
     </div>
 
     <div class="info-block">
@@ -950,7 +948,7 @@ footer {
 <footer>
   <div class="footer-left">
     <a href="https://www.instagram.com/gamesofarcadia/" target="_blank" style="text-decoration:none"><div class="goa-logo-sm">GoA</div></a>
-    <div class="footer-text">GAMES OF ARCADIA &nbsp;|&nbsp; COGNITIVE INFLUENCE RATING v1.2.1</div>
+    <div class="footer-text">GAMES OF ARCADIA &nbsp;|&nbsp; COGNITIVE INFLUENCE RATING v1.3</div>
   </div>
   <div class="footer-right">&copy; <span class="yr"></span> GAMES OF ARCADIA - ALL RIGHTS RESERVED</div>
 </footer>
@@ -1099,26 +1097,8 @@ function bindEvents() {
     if (!this.disabled) runAnalysis();
   });
 
-  document.getElementById('modelSelect').addEventListener('change', updateModelHint);
-  updateModelHint();
-
   document.getElementById('copyBtn').addEventListener('click', copyResults);
   document.getElementById('exportBtn').addEventListener('click', exportResults);
-}
-
-function updateModelHint() {
-  const val = document.getElementById('modelSelect').value;
-  const hint = document.getElementById('modelHint');
-  if (val === 'gemini-2.5-flash') {
-    hint.textContent = '✓ Recommended';
-    hint.style.color = 'var(--accent)';
-  } else if (val === 'gemini-2.5-flash-lite') {
-    hint.textContent = '⚠ Less accurate';
-    hint.style.color = 'var(--warn)';
-  } else if (val === 'gemini-2.5-pro') {
-    hint.textContent = '? Untested';
-    hint.style.color = 'var(--text-dim)';
-  }
 }
 
 async function validateKey(key, mode) {
@@ -1266,7 +1246,7 @@ function copyResults() {
   if (!lastResult) return;
   const lines = [
     'COGNITIVE INFLUENCE RATING - Games of Arcadia',
-    'Games of Arcadia - v1.2.1',
+    'Games of Arcadia - v1.3',
     'Date: ' + new Date().toLocaleDateString(),
     '',
     '-- SCORES --',
@@ -1290,7 +1270,7 @@ function exportResults() {
   if (!lastResult) return;
   const lines = [
     'COGNITIVE INFLUENCE RATING - Games of Arcadia',
-    'Games of Arcadia - v1.2.1',
+    'Games of Arcadia - v1.3',
     'Analysis Date: ' + new Date().toLocaleString(),
     '',
     '============================================',
