@@ -88,10 +88,10 @@ If a result surprises you, try the other model.
 ## Changelog
 
 ### v1.4 — Feb 2026
-- Psyop Score verdict now hardcoded by range in JS — no longer subject to AI interpretation
+- Psyop Score verdict now hardcoded by range in JS; no longer subject to AI interpretation
 - New **Influence Signal** indicator: CLEAN / CAUTION / WARNING based on peak indicator scores, independent of total score
 - Prompt hardened to prevent malformed JSON from breaking analysis
-- Conclusion no longer opens with a probability statement — focuses on what the indicators actually reveal
+- Conclusion no longer opens with a probability statement; focuses on what the indicators actually reveal
 
 ### v1.3 — Feb 2026
 - Model selector redesigned to match panel style
