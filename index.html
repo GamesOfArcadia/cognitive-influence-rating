@@ -1205,7 +1205,7 @@ async function runAnalysis() {
   try {
     const body = {
       contents: [{ parts: [{ text: PROMPT + '\n\nTEXT:\n\n' + text }] }],
-      generationConfig: { maxOutputTokens: 8192, temperature: 0.2 }
+      generationConfig: { maxOutputTokens: 16384, temperature: 0.2 }
     };
 
     const res = await fetch(getEndpoint() + '?key=' + apiKey, {
