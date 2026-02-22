@@ -1139,7 +1139,7 @@ function bindEvents() {
     if (this.value.length > MAX) this.value = this.value.substring(0, MAX);
     const len = this.value.length;
     const el = document.getElementById('charCount');
-    el.textContent = len.toLocaleString() + ' / 100,000';
+    el.textContent = len.toLocaleString() + ' / 150,000';
     el.className = 'char-count' + (len > 90000 ? ' warn' : '') + (len >= MAX ? ' over' : '');
     const hasText = this.value.trim().length > 50;
     const btn = document.getElementById('processBtn');
@@ -1297,19 +1297,7 @@ function renderResults(data) {
   document.getElementById('signalDesc').textContent = signalDesc;
 
   const fill = document.getElementById('scoreFill');
-  let r, g, b;
-  if (score <= 50) {
-    const t = score / 50;
-    r = Math.round(0x2a + t * (0xe9 - 0x2a));
-    g = Math.round(0x9d + t * (0xc4 - 0x9d));
-    b = Math.round(0x8f + t * (0x6a - 0x8f));
-  } else {
-    const t = (score - 50) / 50;
-    r = Math.round(0xe9 + t * (0xe6 - 0xe9));
-    g = Math.round(0xc4 + t * (0x39 - 0xc4));
-    b = Math.round(0x6a + t * (0x46 - 0x6a));
-  }
-  const barColor = `rgb(${r},${g},${b})`;
+  const barColor = vc === 'vl' ? 'var(--score-low)' : vc === 'vm' ? 'var(--score-mid)' : 'var(--score-high)';
   setTimeout(() => {
     fill.style.width = score + '%';
     fill.style.backgroundColor = barColor;
