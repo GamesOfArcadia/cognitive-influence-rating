@@ -12,10 +12,11 @@ Cognitive Influence Rating analyses articles, speeches, YouTube transcripts, soc
 
 ## How It Works
 
-The tool scores any text against 20 indicators derived from open media literacy research, including the Narrative Credibility Index. Each indicator is scored 0–5 by an AI model, producing two outputs:
+The tool scores any text against 20 indicators derived from open media literacy research, including the Narrative Credibility Index. 
+Each indicator is scored 0–5 by an AI model, producing two outputs:
 
-- **Psyop Score** — total out of 100, with probability range (LOW / MODERATE / HIGH)
-- **Influence Signal** — based on peak indicator scores (CLEAN / CAUTION / WARNING)
+- **Psyop Score** : total out of 100, with probability range (LOW / MODERATE / HIGH)
+- **Influence Signal** : based on peak indicator scores (CLEAN / CAUTION / WARNING)
 
 The tool does not determine truth or falsehood. 
 It measures whether the content uses techniques commonly associated with influence operations. 
@@ -53,7 +54,8 @@ A high score means the content is structured to persuade rather than inform.
 ## Requirements
 
 A free **Google Gemini API key** from [aistudio.google.com](https://aistudio.google.com/apikey). 
-No credit card required for the free tier. Your key is stored locally in your browser — no data is sent to or stored by Games of Arcadia.
+No credit card required for the free tier. 
+Your key is stored locally in your browser (no data is sent to or stored by Games of Arcadia.)
 
 ---
 
@@ -73,11 +75,13 @@ No credit card required for the free tier. Your key is stored locally in your br
 
 ## Models
 
-The tool supports three Gemini models. Results may vary between models — different models weigh language patterns differently. If a result surprises you, try the other model.
+The tool supports three Gemini models. 
+Results may vary between models: different models weigh language patterns differently. 
+If a result surprises you, try the other model.
 
-- **Gemini 2.5 Flash** — default, good balance of speed and accuracy
-- **Gemini 2.5 Flash Lite** — faster, can be more sensitive to subtle stylistic manipulation
-- **Gemini 2.5 Pro** — untested, doesn't seem to accept free tier key
+- **Gemini 2.5 Flash** : default, good balance of speed and accuracy
+- **Gemini 2.5 Flash Lite** : faster, can be more sensitive to subtle stylistic manipulation
+- **Gemini 2.5 Pro** : untested, doesn't seem to accept free tier key
 
 ---
 
@@ -103,10 +107,10 @@ The tool supports three Gemini models. Results may vary between models — diffe
 - Token usage panel removed
 
 ### v1.1 — Feb 2026
-- Model selector added — choose between Gemini 2.5 Flash Lite, Flash, and Pro
+- Model selector added: choose between Gemini 2.5 Flash Lite, Flash, and Pro
 
 ### v1.0 — Feb 2026
-- Initial release — 20-indicator CIR scoring, Gemini API integration, copy, export, and share functions
+- Initial release: 20-indicator CIR scoring, Gemini API integration, copy, export, and share functions
 
 ---
 
